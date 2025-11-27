@@ -66,4 +66,8 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearSudoku() {
+        _uiState.update { it.copy(sudoku = null) }
+    }
 }

@@ -22,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,12 +32,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.moviltest.domain.model.Sudoku
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onNavigateToGame: (Sudoku) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(state.sudoku) {
+        state.sudoku?.let { sudoku ->
+            onNavigateToGame(sudoku)
+            viewModel.clearSudoku()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -119,50 +129,6 @@ fun HomeScreen(
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }
-        }
-
-        state.sudoku?.let { sudoku ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Sudoku Generado",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "Tamaño: ${state.width}x${state.width}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Text(
-                        text = "Dificultad: ${state.difficulty}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = sudoku.toString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                Color.White,
-                                RoundedCornerShape(8.dp)
-                            )
-                            .padding(12.dp)
-                    )
-                }
             }
         }
     }
