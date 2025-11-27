@@ -1,5 +1,6 @@
 package com.app.moviltest.data.repository
 
+import com.app.moviltest.data.local.preferences.SudokuPreferences
 import com.app.moviltest.data.mapper.toDomain
 import com.app.moviltest.data.remote.api.SudokuApi
 import com.app.moviltest.domain.model.Sudoku
@@ -11,7 +12,8 @@ import javax.inject.Singleton
 class SudokuRepositoryImpl
 @Inject
 constructor(
-    private val api: SudokuApi
+    private val api: SudokuApi,
+    private val preferences: SudokuPreferences
 ) : SudokuRepository {
 
     override suspend fun getSudoku(
@@ -19,14 +21,40 @@ constructor(
         height: Int?,
         difficulty: String?
     ): Sudoku {
+        if (preferences.isCacheValid()) {
+            preferences.getSudokuCache()?.let { cache ->
+                return Sudoku(
+                    puzzle = preferences.deserializePuzzle(cache.puzzle),
+                    solution = preferences.deserializePuzzle(cache.solution)
+                )
+            }
+        }
 
-        val response = api.getSudoku(
-            apiKey = "ozOP7IOzi505n7W1zz1Lfw==Gk7zLTIXJ0kFG4nv",
-            width = width,
-            height = height,
-            difficulty = difficulty,
-        )
+        return try {
+            val response = api.getSudoku(
+                apiKey = "ozOP7IOzi505n7W1zz1Lfw==Gk7zLTIXJ0kFG4nv",
+                width = width,
+                height = height,
+                difficulty = difficulty,
+            )
 
-        return response.toDomain()
+            val sudoku = response.toDomain()
+
+            preferences.saveSudokuGame(
+                puzzle = sudoku.puzzle,
+                solution = sudoku.solution,
+                currentBoard = sudoku.puzzle
+            )
+
+            sudoku
+
+        } catch (e: Exception) {
+            preferences.getSudokuCache()?.let { cache ->
+                Sudoku(
+                    puzzle = preferences.deserializePuzzle(cache.puzzle),
+                    solution = preferences.deserializePuzzle(cache.solution)
+                )
+            } ?: throw Exception("Fallo API y Cache: ${e.message}", e)
+        }
     }
 }
