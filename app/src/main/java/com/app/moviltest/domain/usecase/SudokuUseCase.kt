@@ -7,13 +7,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class SudokuUseCase @Inject constructor(
+class SudokuUseCase
+@Inject
+constructor(
     private val repository: SudokuRepository
 ) {
 
     operator fun invoke(
-        apiKey: String,
         width: Int,
+        height: Int,
         difficulty: String
     ): Flow<Result<Sudoku>> = flow {
 
@@ -21,9 +23,8 @@ class SudokuUseCase @Inject constructor(
 
         try {
             val sudoku = repository.getSudoku(
-                apiKey = apiKey,
                 width = width,
-                height = width,
+                height = height,
                 difficulty = difficulty,
             )
 

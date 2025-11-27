@@ -8,19 +8,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SudokuRepositoryImpl @Inject constructor(
+class SudokuRepositoryImpl
+@Inject
+constructor(
     private val api: SudokuApi
 ) : SudokuRepository {
 
     override suspend fun getSudoku(
-        apiKey: String,
         width: Int?,
         height: Int?,
         difficulty: String?
     ): Sudoku {
 
         val response = api.getSudoku(
-            apiKey = apiKey,
+            apiKey = "ozOP7IOzi505n7W1zz1Lfw==Gk7zLTIXJ0kFG4nv",
             width = width,
             height = height,
             difficulty = difficulty,
