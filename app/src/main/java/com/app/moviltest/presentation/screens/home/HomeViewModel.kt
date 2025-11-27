@@ -58,7 +58,7 @@ class HomeViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.exception.message ?: "Error desconocido"
+                                error = "Error Interno vuelve a intentar más tarde"
                             )
                         }
                     }
