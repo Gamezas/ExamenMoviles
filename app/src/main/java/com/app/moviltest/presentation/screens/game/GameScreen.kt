@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,6 +78,7 @@ fun GameScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             NumberPad(
+                boardSize = state.boardSize,
                 onNumberClick = { number ->
                     viewModel.updateCellValue(number)
                 },
@@ -102,6 +102,23 @@ fun GameScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
+
+            Button(
+                onClick = {
+                    viewModel.resetBoard()
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                    )
+            ) {
+                    Text(
+                        text = "Reiniciar",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
 
             Button(
                 onClick = onBack,
@@ -212,7 +229,8 @@ fun SudokuCell(
 @Composable
 fun NumberPad(
     onNumberClick: (Int) -> Unit,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
+    boardSize: Int
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

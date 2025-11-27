@@ -18,10 +18,26 @@ class GameViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     fun initializeSudoku(sudoku: Sudoku) {
+        val boardSize = sudoku.puzzle.size
         _uiState.update {
             it.copy(
                 sudoku = sudoku,
-                currentBoard = sudoku.puzzle.map { row -> row.toMutableList() }
+                currentBoard = sudoku.puzzle.map { row -> row.toMutableList() },
+                boardSize = boardSize,
+                errorCells = emptySet()
+            )
+        }
+    }
+
+    fun resetBoard() {
+        val sudoku = _uiState.value.sudoku ?: return
+        _uiState.update {
+            it.copy(
+                currentBoard = sudoku.puzzle.map { row -> row.toMutableList() },
+                selectedCell = null,
+                errorCells = emptySet(),
+                isCompleted = false,
+                showCompletedDialog = false
             )
         }
     }

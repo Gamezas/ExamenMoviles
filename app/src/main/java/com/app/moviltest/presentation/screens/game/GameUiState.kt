@@ -8,5 +8,6 @@ data class GameUiState(
     val selectedCell: Pair<Int, Int>? = null,
     val errorCells: Set<Pair<Int, Int>> = emptySet(),
     val isCompleted: Boolean = false,
-    val showCompletedDialog: Boolean = false
+    val showCompletedDialog: Boolean = false,
+    val boardSize: Int = 9
 )
